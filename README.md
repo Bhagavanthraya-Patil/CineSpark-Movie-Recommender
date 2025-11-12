@@ -125,6 +125,58 @@ cd serving_api
 uvicorn app:app --reload
 ```
 
+### Run commands (Windows — exact commands)
+
+If you tried `npm start` from the project root and saw:
+```
+npm ERR! enoent Could not read package.json: Error: ENOENT: no such file or directory, open 'C:\...final-year-project\package.json'
+```
+that means you ran npm in the wrong folder. The frontend's package.json lives in the frontend directory. Use these exact commands:
+
+1. Frontend (dev server)
+```powershell
+cd "C:\Users\bhaga\OneDrive\Documents\workspace\Project\final-year-project\frontend"
+npm install
+npm start
+# Open http://localhost:3000
+```
+
+2. Backend (optional, start before frontend if the UI proxies /api to it)
+```powershell
+cd "C:\Users\bhaga\OneDrive\Documents\workspace\Project\final-year-project\serving_api"
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app:app --reload --port 8000
+# Backend will be available at http://localhost:8000
+```
+
+3. Run both (two terminals)
+- Terminal A: start backend (step 2)
+- Terminal B: start frontend (step 1)
+
+### Run commands (macOS / Linux)
+1. Frontend:
+```bash
+cd ~/path/to/final-year-project/frontend
+npm install
+npm start
+# http://localhost:3000
+```
+2. Backend:
+```bash
+cd ~/path/to/final-year-project/serving_api
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+uvicorn app:app --reload --port 8000
+```
+
+### Quick troubleshooting
+- If you see ECONNREFUSED for `/favicon.ico` or other static files, ensure `public/favicon.svg` exists and you did not set a global `"proxy"` in frontend/package.json. Prefer `src/setupProxy.js` to proxy only `/api` routes to the backend.
+- If `Cannot find module './App'` or similar, ensure `frontend/src/App.tsx` and `frontend/src/index.tsx` exist.
+- If node/npm complains, remove node_modules and run `npm install` again.
+
 ## 📊 Data Flow
 
 1. **Data Ingestion:** MovieLens + Kafka events → Databricks Delta tables
